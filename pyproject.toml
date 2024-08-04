@@ -1,0 +1,51 @@
+[tool.poetry]
+readme = "README.md"
+license = "Proprietary"
+package-mode = false
+
+#name = "bookmarks-chat"
+#version = "0.1.0"
+#description = "Brave bookmarks crawler app."
+##authors = ["Your Name <you@example.com>"]
+#license = "MIT"  # or any other license you choose
+
+[tool.poetry.dependencies]
+python = "^3.10"
+beautifulsoup4 = "4.12.3"
+langchain_community = "0.2.6"
+langchain_core = "0.2.10"
+newspaper3k = "0.2.8"
+pandas = "2.2.2"
+pydantic = "2.7.4"
+python-dotenv = "1.0.1"
+requests = "2.32.3"
+SQLAlchemy = "2.0.31"
+tqdm = "4.66.4"
+typer = "0.12.3"
+psycopg2-binary = "^2.9.9"
+
+langchain-postgres = "^0.0.9"
+psycopg = "^3.2.0"
+lxml-html-clean = "^0.1.1"
+sentence-transformers = "^3.0.1"
+websockets = "^12.0"
+fastapi = "^0.111.0"
+[tool.poetry.dev-dependencies]
+# Add your development dependencies here
+# example: pytest = "^6.2.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+## Optional: To specify scripts/entry points
+[tool.poetry.scripts]
+cli = "main:main_function"
+#
+## Optional: To include additional files in the package
+#[tool.poetry.include]
+## example: ["README.md", "LICENSE"]
+#
+## Optional: To exclude specific files from the package
+#[tool.poetry.exclude]
+## example: ["tests/*"]
