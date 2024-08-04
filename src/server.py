@@ -1,8 +1,10 @@
-import pandas as pd
+import json
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import polars as pl
 
 from vectordb.index import init_store
 from vectordb.utils import search_text
@@ -25,9 +27,9 @@ class Body(BaseModel):
 
 
 @app.post("/search")
-async def search(text: Body):
-    result: pd.DataFrame = search_text(vectorstore, text.text)
-    return result["URL"].to_json()
+async def search(text: Body) -> str:
+    result: pl.DataFrame = search_text(vectorstore, text.text)
+    return json.dumps(result["URL"].to_list())
 
 
 if __name__ == "__main__":

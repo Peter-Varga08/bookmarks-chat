@@ -5,11 +5,10 @@ import unicodedata
 from abc import ABC, abstractmethod
 
 import requests
-from newspaper import Article
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from newspaper import Article
 from pydantic import BaseModel
-
 
 load_dotenv()
 

@@ -18,9 +18,14 @@ def init_store(collection_name: str = "bookmarks") -> PGVector:
     return vectorstore
 
 
-if __name__ == "__main__":
+def delete_store() -> None:
     vectorstore = init_store()
     vectorstore.drop_tables()
+
+
+if __name__ == "__main__":
+    init_store()
+    # delete_store()
 
     # dummy_documents = get_dummy_documents()
     # vectorstore.add_documents(
@@ -28,7 +33,7 @@ if __name__ == "__main__":
     #     names=[doc.metadata["name"] for doc in dummy_documents],
     # )
     # query_docs = vectorstore.similarity_search_with_score("plant", k=3)
-    # results_table = pd.DataFrame(
+    # results_table = pl.DataFrame(
     #     {
     #         "Name": [d[0].metadata['name'] for d in query_docs],
     #         "Annotation": [d[0].page_content for d in query_docs],

@@ -1,7 +1,7 @@
 import json
 
-from config import BRAVE_BOOKMARKS_PATH
-from src.bookmark.models import BookmarkCollection
+from bookmark.config import BRAVE_BOOKMARKS_PATH
+from bookmark.models import BookmarkCollection
 
 
 def load_bookmarks() -> BookmarkCollection:

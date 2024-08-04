@@ -22,7 +22,7 @@ def crawl_all():
     links: List[List[Link]] = brave_bookmarks.urls_all
     documents = create_documents_from_links(links=links)
     vectorstore.add_documents(documents)
-    print(f"Crawled and added {len(documents)} documents to vectorstore.")
+    print(f"Added {len(documents)} documents to vectorstore.")
 
 
 @app.command()
@@ -32,7 +32,7 @@ def search(text: str = typer.Argument(..., help="Text to search with.")):
 
 
 if __name__ == "__main__":
-    app()
+    crawl_all()
 
 # Uncomment if need bookmarks by main folder
 # ------------------------------------------
