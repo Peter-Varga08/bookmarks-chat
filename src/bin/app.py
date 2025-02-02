@@ -6,8 +6,9 @@ from typer import Typer
 
 from bookmark.loader import load_bookmarks
 from bookmark.models import Link
+from crawler.utils import crawl_contents_from_links
 from vectordb.index import init_store
-from vectordb.utils import create_documents_from_links, search_text
+from vectordb.utils import search_text, read_documents_from_cache
 
 warnings.filterwarnings("ignore")
 
@@ -16,11 +17,18 @@ vectorstore = init_store()
 
 
 @app.command()
-def crawl_all():
-    """Crawl all Brave bookmarks from local bookmarks file."""
+def crawl_documents() -> None:
+    """Crawl all Brave bookmarks from local bookmarks files and upload them."""
     brave_bookmarks = load_bookmarks()
     links: List[List[Link]] = brave_bookmarks.urls_all
-    documents = create_documents_from_links(links=links)
+    crawl_contents_from_links(links)
+
+
+@app.command()
+def add_cached_documents() -> None:
+    """Upload the cached documents to the vectorstore."""
+    # Read documents from cache
+    documents = read_documents_from_cache()
     vectorstore.add_documents(documents)
     print(f"Added {len(documents)} documents to vectorstore.")
 
@@ -32,7 +40,7 @@ def search(text: str = typer.Argument(..., help="Text to search with.")):
 
 
 if __name__ == "__main__":
-    crawl_all()
+    crawl_documents()
 
 # Uncomment if need bookmarks by main folder
 # ------------------------------------------

@@ -1,18 +1,15 @@
 import os
-from collections import defaultdict
 
+import pandas as pd
 import polars as pl
-from dotenv import load_dotenv
 from langchain_core.documents import Document
 from tqdm import tqdm
 
 from bookmark.models import Link
+from bookmark.utils import get_valid_folders_dict
+from config import CRAWLER_NAME, CACHE_DATA_DIR
 from crawler import SoupCrawler, JinaCrawler
-from crawler.enum import CrawlerEnum
-
-load_dotenv()
-
-CRAWLER_NAME = os.getenv("CRAWLER")
+from crawler.enums import CrawlerEnum
 
 
 def _search_text(vectorstore, text: str, k: int = 3) -> pl.DataFrame:
@@ -45,18 +42,13 @@ def create_document(content: str, name: str, url: str, folder: str) -> Document:
     )
 
 
-def _get_valid_folders_dict() -> defaultdict[str, bool]:
-    valid_folders = ["cs", "wacc", "cloud", "ai practical"]
-    initial_dict = {folder: True for folder in valid_folders}
-    return defaultdict(bool, initial_dict)
-
-
 def create_documents_from_links(links: list[list[Link]]) -> list[Document]:
     documents = []
+
     for tab in tqdm(links):
         docs_in_tab = []
         for link in tqdm(tab):
-            if not _get_valid_folders_dict()[link.folder.lower().split("/")[0]]:
+            if not get_valid_folders_dict()[link.folder.lower().split("/")[0]]:
                 continue
             print(f"Processing link for folder [{link.folder}].")
             try:
@@ -70,14 +62,34 @@ def create_documents_from_links(links: list[list[Link]]) -> list[Document]:
                         "specified in the .env file"
                     )
                 content: str = crawl_website.crawl()
+
                 document = create_document(
                     content=content, name=link.name, url=link.url, folder=link.folder
                 )
                 docs_in_tab.append(document)
             except Exception as e:
                 print(f"Error {e} for link: {link}")
-            print(f"Created document for link [{link}].")
-        documents.extend(docs_in_tab)
+
         print(f"Number of documents created from tab: [{len(docs_in_tab)}].")
+        documents.extend(docs_in_tab)
+
     print(f"Number of documents created from all links: [{len(documents)}].")
+    return documents
+
+
+# TODO: Throw error if CACHE_DATA_DIR does not exist or is empty
+def read_documents_from_cache() -> list[Document]:
+    """Read documents from cache."""
+    documents = []
+    for file in os.listdir(CACHE_DATA_DIR):
+        if file.endswith(".json"):
+            df = pd.read_json(CACHE_DATA_DIR / file)
+            documents.append(
+                create_document(
+                    content=df["content"],
+                    name=df["name"],
+                    url=df["url"],
+                    folder=df["folder"],
+                )
+            )
     return documents
